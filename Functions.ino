@@ -153,22 +153,67 @@ void stepperMove(){
 
   
 void setPen(){
-  int cmd;
+  int cmd,penDistance,x,servoDelay;
+  
   int value;
   char *arg;
   arg = SCmd.next(); 
   if (arg != NULL) {
       cmd = atoi(arg);
 	  switch (cmd) {
-		  case 0:
-		  penServo.write(penUpPos);
-		  penState=penUpPos;
-		  break;
-		  
-		  case 1:
-		  penServo.write(penDownPos);
-		  penState=penDownPos;
-		  //Serial.println("case 1");
+		   case 1: //Raise Pen
+                  analogWrite(laserPin,laserOFF);    
+                  servoDelay = (servoFullSpeed* 5 * 100) / servoRateUp; //Express as a scaling down of a delay that matches the actual speed of the servo
+                  penDistance = penUpPos-penState;
+                  if(penDistance < 0) //coming from high value down
+                  {
+                  for(x=penState; x > penUpPos; x--) //This needs the sign from penDistance in the x > penDownPos check
+                    {
+                    delay(servoDelay);              
+                    penServo.write(x);
+                    }
+                  }
+                  else if(penDistance > 0) //coming from a low value up
+                  {
+                  for(x=penState; x < penUpPos; x++) //This needs the sign from penDistance in the x > penDownPos check
+                    {
+                    delay(servoDelay);              
+                    penServo.write(x);
+                    }
+                  }
+
+    penServo.write(penUpPos); //write final position
+    penState=penUpPos;
+
+    break;
+    
+    
+    case 0: //Lower Pen
+                  servoDelay = (servoFullSpeed* 5 * 100) / servoRateDown; //Express as a scaling down of a delay that matches the actual speed of the servo
+                  penDistance = penDownPos-penState;
+
+                  if(penDistance < 0) //coming from high value down
+                  {
+                  for(x=penState; x > penDownPos; x--) //This needs the sign from penDistance in the x > penDownPos check
+                    {
+                    delay(servoDelay);              
+                    penServo.write(x);
+                    }
+                  }
+                  else if(penDistance > 0) //coming from a low value up
+                  {
+                  for(x=penState; x < penDownPos; x++) //This needs the sign from penDistance in the x > penDownPos check
+                    {
+                    delay(servoDelay);              
+                    penServo.write(x);
+                    }
+                  }
+    
+    penServo.write(penDownPos); //write final position
+    penState=penDownPos;
+                  analogWrite(laserPin,laserON);                    
+                
+//Serial.println("case 1");
 		  break;
 		  
 		  default:
@@ -192,14 +237,38 @@ void setPen(){
 }  
 
 void togglePen(){
-  int value;
+  int value,penDistance,x,servoDelay;
   char *arg;
+
   arg = SCmd.next(); 
   if (arg != NULL) 
       value = atoi(arg);
-  if (penState==penUpPos) {
+  if (penState==penUpPos) 
+                  {
+                  //PEN IS MOVING DOWN
+                  analogWrite(laserPin,laserOFF);
+                  servoDelay = (servoFullSpeed* 5 * 100) / servoRateDown; //Express as a scaling down of a delay that matches the actual speed of the servo
+                  penDistance = penDownPos-penUpPos;
+
+                  if(penDistance < 0) //coming from high value down
+                  {
+                  for(x=penUpPos; x > penDownPos; x--) //This needs the sign from penDistance in the x > penDownPos check
+                    {
+                    delay(servoDelay);              
+                    penServo.write(x);
+                    }
+                  }
+                  else if(penDistance > 0) //coming from a low value up
+                  {
+                  for(x=penUpPos; x < penDownPos; x++) //This needs the sign from penDistance in the x > penDownPos check
+                    {
+                    delay(servoDelay);              
+                    penServo.write(x);
+                    }
+                  }
             penServo.write(penDownPos);
             penState=penDownPos;
+            
             if (arg != NULL) 
                       delay(value);
             else   
@@ -208,8 +277,29 @@ void togglePen(){
             }
 			
   else   {
+                    //PEN IS MOVING UP
+                  servoDelay = (servoFullSpeed* 5 * 100) / servoRateUp; //Express as a scaling down of a delay that matches the actual speed of the servo
+                  penDistance = penUpPos-penState;
+                  if(penDistance < 0) //coming from high value down
+                  {
+                  for(x=penState; x > penUpPos; x--) //This needs the sign from penDistance in the x > penDownPos check
+                    {
+                    delay(servoDelay);              
+                    penServo.write(x);
+                    }
+                  }
+                  else if(penDistance > 0) //coming from a low value up
+                  {
+                  for(x=penState; x < penUpPos; x++) //This needs the sign from penDistance in the x > penDownPos check
+                    {
+                    delay(servoDelay);              
+                    penServo.write(x);
+                    }
+                  }
+                  
             penServo.write(penUpPos);
             penState=penUpPos;
+            analogWrite(laserPin,laserON);
             if (arg != NULL) 
                       delay(value);
             else   
@@ -276,10 +366,10 @@ void stepperModeConfigure(){
       value = atoi(val);
   if ((arg != NULL) && (val != NULL)){
      switch (cmd) {      
-       case 4: penDownPos= (int) ((float) (value-6000)/(float) 133.3); // transformation from EBB to PWM-Servo
+       case 4: penUpPos= (int) ((float) (value-6000)/(float) 133.3); // transformation from EBB to PWM-Servo
                sendAck();
                break;
-       case 5: penUpPos= (int)((float) (value-6000)/(float) 133.3); // transformation from EBB to PWM-Servo
+       case 5: penDownPos= (int)((float) (value-6000)/(float) 133.3); // transformation from EBB to PWM-Servo
                sendAck();
                break;
        case 6: //rotMin=value;    ignored
