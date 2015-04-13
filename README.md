@@ -1,10 +1,14 @@
-Eggduino
+Eggduino (Nebarnix's Laser/Servo Rate Fork)
 ====
 
 Arduino Firmware for Eggbot / Spherebot with Inkscape-Integration
 
-Version 1.4s
+Version 1.4n
 tested with Inkscape Portable 0.91, Eggbot Extension and patched eggbot.py
+
+This fork by Nebarnix implements a servo rate control, as a percentage of full speed, so you can slow down the pen up and pen down (they were much too fast without it)
+
+This changes pins around from the parent project, sorry about that. This also implements a laser out PWM signal to laser engraving eggs or ablating dye from eggs. Have fun and be safe, always wear eye protection and warn others BEFORE they come into visual range!
 
 Regards: Eggduino-Firmware by Joachim Cerny, 2015
 
