@@ -26,18 +26,20 @@ Thanks to my wife and my daughter for their patience. :-)
 
 #define initSting "EBBv13_and_above Protocol emulated by Eggduino-Firmware V1.4"
 //Rotational Stepper
-  #define step1 11
-  #define dir1 10
-  #define enableRotMotor 9
+  #define step1 7
+  #define dir1 6
+  #define enableRotMotor 5
   #define rotMicrostep 16  //MicrostepMode, only 1,2,4,8,16 allowed, because of Integer-Math in this Sketch
 //Pen Stepper
-  #define step2 8
-  #define dir2 7
-  #define enablePenMotor 6
+  #define step2 3
+  #define dir2 2
+  #define enablePenMotor 4
   #define penMicrostep 16 //MicrostepMode, only 1,2,4,8,16 allowed, because of Integer-Math in this Sketch
 //Servo
-  #define servoPin 3
-  #define PrgButton 2 //optional Pushbutton between Pin and Ground to use certain functions with Eggbot-Inkscape extension
+  #define servoFullSpeed 10
+  #define servoPin 8
+  #define laserPin 11
+  #define PrgButton 9 //optional Pushbutton between Pin and Ground to use certain functions with Eggbot-Inkscape extension
 
 //make Objects
   AccelStepper rotMotor(1, step1, dir1);
@@ -46,10 +48,13 @@ Thanks to my wife and my daughter for their patience. :-)
   SerialCommand SCmd;
   
 // Variables... be careful, by messing around here, evrything has a reason and crossrelations...
+  uint8_t laserON=80;
+  uint8_t laserOFF=2;
+
   int penMin=0;
   int penMax=0;
-  int penUpPos=5;  //can be overwritten from EBB-Command SC
-  int penDownPos=20; //can be overwritten from EBB-Command SC
+  int penUpPos=12;  //can be overwritten from EBB-Command SC
+  int penDownPos=8; //can be overwritten from EBB-Command SC
   int servoRateUp=0; //from EBB-Protocol not implemented on machine-side
   int servoRateDown=0;//from EBB-Protocol not implemented on machine-side
   long rotStepError=0;
