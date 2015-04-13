@@ -1,4 +1,6 @@
 void initHardware(){
+  pinMode(laserPin, OUTPUT);
+  analogWrite(laserPin,laserOFF);
   pinMode(enableRotMotor, OUTPUT); 
   pinMode(enablePenMotor, OUTPUT);  
   rotMotor.setMaxSpeed(2000.0);
